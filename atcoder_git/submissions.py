@@ -3,6 +3,8 @@ from typing import List, NamedTuple, Optional
 import urllib.parse
 import urllib.request
 
+from atcoder_git.util import limit_interval
+
 
 __all__ = [
     "Submission",
@@ -26,6 +28,7 @@ class Submission(NamedTuple):
 API_BASE = "https://kenkoooo.com/atcoder"
 
 
+@limit_interval(1.0)
 def get_submissions(user: str) -> List[Submission]:
     params = urllib.parse.urlencode({
         "user": user,
