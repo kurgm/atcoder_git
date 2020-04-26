@@ -1,7 +1,6 @@
-import json
 from typing import List, NamedTuple, Optional
-import urllib.parse
-import urllib.request
+
+import requests
 
 from atcoder_git.util import limit_interval
 
@@ -30,9 +29,6 @@ API_BASE = "https://kenkoooo.com/atcoder"
 
 @limit_interval(1.0)
 def get_submissions(user: str) -> List[Submission]:
-    params = urllib.parse.urlencode({
-        "user": user,
-    })
-    url = f"{API_BASE}/atcoder-api/results?{params}"
-    resp = urllib.request.urlopen(url)
-    return [Submission(*sub) for sub in json.load(resp)]
+    resp = requests.get(f"{API_BASE}/atcoder-api/results", {"user": user})
+    subs = resp.json()
+    return [Submission(**sub) for sub in subs]
