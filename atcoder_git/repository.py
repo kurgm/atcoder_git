@@ -1,3 +1,4 @@
+import io
 import os
 import subprocess
 from typing import NamedTuple
@@ -15,6 +16,9 @@ class Repository:
     def update_file(
             self, filepath: str, datetime: int, content: bytes,
             message: str) -> None:
+        raise NotImplementedError()
+
+    def has_update(self, filepath: str, datetime: int) -> bool:
         raise NotImplementedError()
 
 
@@ -81,3 +85,21 @@ class GitRepository(Repository):
             env=env,
             check=True
         )
+
+    def has_update(self, filepath: str, datetime: int) -> bool:
+        pathspecs = [filepath]
+        result = subprocess.run(
+            [
+                "git", "log", "--pretty=format:%ad", "--date=raw", "--",
+                *pathspecs
+            ],
+            cwd=self.path,
+            capture_output=True,
+            check=True
+        )
+        with io.BytesIO(result.stdout) as resfile:
+            for line in resfile:
+                epoch = int(line.decode("utf-8").split()[0])
+                if epoch == datetime:
+                    return True
+            return False
