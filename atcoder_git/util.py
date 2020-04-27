@@ -9,6 +9,9 @@ __all__ = [
 ]
 
 
+RT = TypeVar("RT")
+
+
 def wait_until(t: float) -> None:
     now = time.time()
     if now < t:
@@ -17,7 +20,6 @@ def wait_until(t: float) -> None:
 
 def limit_interval(interval: float):
     next_time: Optional[float] = None
-    RT = TypeVar("RT")
 
     def _limit_interval(func: Callable[..., RT]) -> Callable[..., RT]:
         @functools.wraps(func)
@@ -33,3 +35,20 @@ def limit_interval(interval: float):
         return wrapper
 
     return _limit_interval
+
+
+def cache_result(func: Callable[[], RT]) -> Callable[[], RT]:
+    result = None
+    cached = False
+
+    @functools.wraps(func)
+    def wrapper():
+        nonlocal result, cached
+        if cached:
+            return result
+
+        result = func()
+        cached = True
+        return result
+
+    return wrapper
