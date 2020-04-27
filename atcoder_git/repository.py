@@ -1,7 +1,7 @@
 import io
 import os
 import subprocess
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 
 __all__ = [
@@ -33,10 +33,11 @@ class GitRepositoryError(OSError):
 
 class GitRepository(Repository):
     path: str
-    user: GitUser
+    user: Optional[GitUser]
     timezone: str
 
-    def __init__(self, path: str, user: GitUser, timezone: str) -> None:
+    def __init__(
+            self, path: str, user: Optional[GitUser], timezone: str) -> None:
         self.path = path
         self.user = user
         self.timezone = timezone
@@ -77,8 +78,11 @@ class GitRepository(Repository):
         datetime_str = "%d %s" % (datetime, self.timezone)
 
         env = dict(os.environ)
-        env["GIT_AUTHOR_NAME"] = env["GIT_COMMITTER_NAME"] = self.user.name
-        env["GIT_AUTHOR_EMAIL"] = env["GIT_COMMITTER_EMAIL"] = self.user.email
+        if self.user:
+            env["GIT_AUTHOR_NAME"] = env["GIT_COMMITTER_NAME"] = \
+                self.user.name
+            env["GIT_AUTHOR_EMAIL"] = env["GIT_COMMITTER_EMAIL"] = \
+                self.user.email
         env["GIT_AUTHOR_DATE"] = env["GIT_COMMITTER_DATE"] = datetime_str
 
         subprocess.run(
