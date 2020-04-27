@@ -24,11 +24,38 @@ class Submission(NamedTuple):
     execution_time: Optional[int]
 
 
+class Problem(NamedTuple):
+    id: str
+    contest_id: str
+    title: str
+
+
+class ContestProblem(NamedTuple):
+    contest_id: str
+    problem_id: str
+
+
 API_BASE = "https://kenkoooo.com/atcoder"
 
+atcoder_problems_api_limit = limit_interval(1.0)
 
-@limit_interval(1.0)
+
+@atcoder_problems_api_limit
 def get_submissions(user: str) -> List[Submission]:
     resp = requests.get(f"{API_BASE}/atcoder-api/results", {"user": user})
     subs = resp.json()
     return [Submission(**sub) for sub in subs]
+
+
+@atcoder_problems_api_limit
+def get_problems() -> List[Problem]:
+    resp = requests.get(f"{API_BASE}/resources/problems.json")
+    probs = resp.json()
+    return [Problem(**prob) for prob in probs]
+
+
+@atcoder_problems_api_limit
+def get_contest_problems() -> List[ContestProblem]:
+    resp = requests.get(f"{API_BASE}/resources/contest-problems.json")
+    cprobs = resp.json()
+    return [ContestProblem(**cprob) for cprob in cprobs]
