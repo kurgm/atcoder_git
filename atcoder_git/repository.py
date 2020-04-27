@@ -13,7 +13,8 @@ __all__ = [
 
 class Repository:
     def update_file(
-            self, filepath: str, datetime: int, content: bytes) -> None:
+            self, filepath: str, datetime: int, content: bytes,
+            message: str) -> None:
         raise NotImplementedError()
 
 
@@ -50,13 +51,13 @@ class GitRepository(Repository):
             raise GitRepositoryError("not a git repository: %s" % self.path)
 
     def update_file(
-            self, filepath: str, datetime: int, content: bytes) -> None:
+            self, filepath: str, datetime: int, content: bytes,
+            message: str) -> None:
         actual_path = os.path.join(self.path, filepath)
         with open(actual_path, "wb") as file:
             file.write(content)
 
         self._add(filepath)
-        message = "Update %s" % filepath
         self._commit(message, datetime)
 
     def _add(self, *pathspecs: str) -> None:
