@@ -58,6 +58,8 @@ class GitRepository(Repository):
             self, filepath: str, datetime: int, content: bytes,
             message: str) -> None:
         actual_path = os.path.join(self.path, filepath)
+
+        os.makedirs(os.path.dirname(actual_path), exist_ok=True)
         with open(actual_path, "wb") as file:
             file.write(content)
 
