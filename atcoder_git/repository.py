@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-import io
-import os
-import subprocess
-from typing import NamedTuple, Optional
-
-
 __all__ = [
     "Repository",
     "GitUser",
     "GitRepositoryError",
     "GitRepository",
 ]
+
+import io
+import os
+import subprocess
+from typing import NamedTuple, Optional
 
 
 class Repository:

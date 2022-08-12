@@ -1,16 +1,15 @@
 from __future__ import annotations
 
+__all__ = [
+    "Submission",
+    "get_all_submissions",
+]
+
 from typing import NamedTuple, Optional
 
 import requests
 
 from atcoder_git.util import limit_interval
-
-
-__all__ = [
-    "Submission",
-    "get_all_submissions",
-]
 
 # https://github.com/kenkoooo/AtCoderProblems/blob/master/atcoder-problems-backend/sql-client/src/models.rs
 

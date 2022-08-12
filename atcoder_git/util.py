@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import functools
-import time
-from typing import Callable, Optional, TypeVar
-
-
 __all__ = [
     "limit_interval",
     "wait_until",
 ]
+
+import functools
+import time
+from typing import Callable, Optional, TypeVar
 
 
 RT = TypeVar("RT")

@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+__all__ = [
+    "SubmissionDetail",
+    "get_submission_detail",
+]
+
 from enum import Enum
 from html.parser import HTMLParser
 from typing import NamedTuple
