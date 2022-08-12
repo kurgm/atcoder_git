@@ -2,7 +2,7 @@
 
 import argparse
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import atcoder_git.atcoder
 import atcoder_git.repository
@@ -11,18 +11,15 @@ from atcoder_git.util import cache_result
 
 
 @cache_result
-def contest_alphabet_dict() -> Dict[str, Tuple[str, str]]:
-    result = {}
-
-    for problem in atcoder_git.submissions.get_problems():
-        alphabet, _title = problem.title.split(". ", 1)
-        result[problem.id] = (problem.contest_id, alphabet)
-
-    return result
+def problems_dict() -> Dict[str, atcoder_git.submissions.Problem]:
+    return {
+        problem.id: problem
+        for problem in atcoder_git.submissions.get_problems()
+    }
 
 
-def lookup_contest_alphabet(problem_id: str) -> Tuple[str, str]:
-    return contest_alphabet_dict()[problem_id]
+def lookup_problem(problem_id: str) -> atcoder_git.submissions.Problem:
+    return problems_dict()[problem_id]
 
 
 LANGUAGE_EXTENSION: Dict[str, str] = {
@@ -99,12 +96,12 @@ def get_extension_from_language(language: str) -> str:
 
 
 def get_file_path(submission: atcoder_git.submissions.Submission) -> str:
-    contest, alphabet = lookup_contest_alphabet(submission.problem_id)
+    problem = lookup_problem(submission.problem_id)
 
     ext = get_extension_from_language(submission.language)
     return os.path.join(
-        contest,
-        alphabet,
+        problem.contest_id,
+        problem.problem_index,
         f"Main{ext}"
     )
 
