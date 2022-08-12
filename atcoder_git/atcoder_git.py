@@ -4,16 +4,16 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
+from functools import cache
 import os
 from typing import Optional
 
 import atcoder_git.atcoder
 import atcoder_git.repository
 import atcoder_git.submissions
-from atcoder_git.util import cache_result
 
 
-@cache_result
+@cache
 def contest_sort_key_dict() -> dict[str, tuple[int, int, str]]:
     return {
         contest.id: (
@@ -25,7 +25,7 @@ def contest_sort_key_dict() -> dict[str, tuple[int, int, str]]:
     }
 
 
-@cache_result
+@cache
 def contest_problems_dict() -> \
         dict[str, list[atcoder_git.submissions.ContestProblem]]:
     result = defaultdict[str, list[atcoder_git.submissions.ContestProblem]](
