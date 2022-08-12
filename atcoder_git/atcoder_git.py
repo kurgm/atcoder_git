@@ -135,7 +135,7 @@ def build_repository(
         repository: atcoder_git.repository.Repository,
         username: str
 ) -> None:
-    submissions = atcoder_git.submissions.get_submissions(username)
+    submissions = atcoder_git.submissions.get_all_submissions(username)
     submissions.sort(key=lambda submission: submission.epoch_second)
     for submission in submissions:
         if submission.result != "AC":

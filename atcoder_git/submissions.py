@@ -7,7 +7,7 @@ from atcoder_git.util import limit_interval
 
 __all__ = [
     "Submission",
-    "get_submissions",
+    "get_all_submissions",
 ]
 
 # https://github.com/kenkoooo/AtCoderProblems/blob/master/atcoder-problems-backend/sql-client/src/models.rs
@@ -47,8 +47,11 @@ atcoder_problems_api_limit = limit_interval(1.0)
 
 
 @atcoder_problems_api_limit
-def get_submissions(user: str) -> List[Submission]:
-    resp = requests.get(f"{API_BASE}/atcoder-api/results", {"user": user})
+def get_submissions_from(user: str, from_second: int) -> List[Submission]:
+    resp = requests.get(f"{API_BASE}/atcoder-api/v3/user/submissions", {
+        "user": user,
+        "from_second": from_second,
+    })
     subs = resp.json()
     return [Submission(**sub) for sub in subs]
 
@@ -65,3 +68,14 @@ def get_contest_problems() -> List[ContestProblem]:
     resp = requests.get(f"{API_BASE}/resources/contest-problems.json")
     cprobs = resp.json()
     return [ContestProblem(**cprob) for cprob in cprobs]
+
+
+def get_all_submissions(user: str) -> List[Submission]:
+    result: List[Submission] = []
+    from_second = 0
+    while True:
+        new_submissions = get_submissions_from(user, from_second)
+        if not new_submissions:
+            return result
+        from_second = new_submissions[-1].epoch_second + 1
+        result += new_submissions
