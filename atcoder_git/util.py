@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import functools
 import time
-from typing import Callable, Optional, TypeVar
+from typing import Callable, Optional, TypeVar, cast
 
 
 __all__ = [
@@ -38,14 +40,14 @@ def limit_interval(interval: float):
 
 
 def cache_result(func: Callable[[], RT]) -> Callable[[], RT]:
-    result = None
+    result: Optional[RT] = None
     cached = False
 
     @functools.wraps(func)
     def wrapper():
         nonlocal result, cached
         if cached:
-            return result
+            return cast(RT, result)
 
         result = func()
         cached = True

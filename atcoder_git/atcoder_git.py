@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import argparse
 from collections import defaultdict
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 
 import atcoder_git.atcoder
 import atcoder_git.repository
@@ -12,7 +14,7 @@ from atcoder_git.util import cache_result
 
 
 @cache_result
-def contest_sort_key_dict() -> Dict[str, Tuple[int, int, str]]:
+def contest_sort_key_dict() -> dict[str, tuple[int, int, str]]:
     return {
         contest.id: (
             1 if contest.rate_change == "-" else 0,
@@ -25,9 +27,9 @@ def contest_sort_key_dict() -> Dict[str, Tuple[int, int, str]]:
 
 @cache_result
 def contest_problems_dict() -> \
-        Dict[str, List[atcoder_git.submissions.ContestProblem]]:
-    result: Dict[str, List[atcoder_git.submissions.ContestProblem]] = \
-        defaultdict(lambda: [])
+        dict[str, list[atcoder_git.submissions.ContestProblem]]:
+    result = defaultdict[str, list[atcoder_git.submissions.ContestProblem]](
+        lambda: [])
 
     for contest_problem in atcoder_git.submissions.get_contest_problems():
         result[contest_problem.problem_id].append(contest_problem)
@@ -43,7 +45,7 @@ def lookup_contest_problem(problem_id: str) -> \
         key=lambda cprob: sort_key_dict[cprob.contest_id])
 
 
-LANGUAGE_EXTENSION: Dict[str, str] = {
+LANGUAGE_EXTENSION: dict[str, str] = {
     "Ada": ".adb",
     "Awk": ".awk",
     "Bash": ".sh",
@@ -165,7 +167,7 @@ def build_repository(
             add_to_repository(submission, repository)
 
 
-def main(argv: Optional[List[str]] = None) -> None:
+def main(argv: Optional[list[str]] = None) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--git-user", nargs=2, metavar=("NAME", "EMAIL"))
     parser.add_argument("--git-timezone", default="+0900")

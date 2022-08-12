@@ -1,4 +1,6 @@
-from typing import List, NamedTuple, Optional
+from __future__ import annotations
+
+from typing import NamedTuple, Optional
 
 import requests
 
@@ -55,7 +57,7 @@ atcoder_problems_api_limit = limit_interval(1.0)
 
 
 @atcoder_problems_api_limit
-def get_submissions_from(user: str, from_second: int) -> List[Submission]:
+def get_submissions_from(user: str, from_second: int) -> list[Submission]:
     resp = requests.get(f"{API_BASE}/atcoder-api/v3/user/submissions", {
         "user": user,
         "from_second": from_second,
@@ -65,28 +67,28 @@ def get_submissions_from(user: str, from_second: int) -> List[Submission]:
 
 
 @atcoder_problems_api_limit
-def get_problems() -> List[Problem]:
+def get_problems() -> list[Problem]:
     resp = requests.get(f"{API_BASE}/resources/problems.json")
     probs = resp.json()
     return [Problem(**prob) for prob in probs]
 
 
 @atcoder_problems_api_limit
-def get_contest_problems() -> List[ContestProblem]:
+def get_contest_problems() -> list[ContestProblem]:
     resp = requests.get(f"{API_BASE}/resources/contest-problem.json")
     cprobs = resp.json()
     return [ContestProblem(**cprob) for cprob in cprobs]
 
 
 @atcoder_problems_api_limit
-def get_contests() -> List[Contest]:
+def get_contests() -> list[Contest]:
     resp = requests.get(f"{API_BASE}/resources/contests.json")
     conts = resp.json()
     return [Contest(**cont) for cont in conts]
 
 
-def get_all_submissions(user: str) -> List[Submission]:
-    result: List[Submission] = []
+def get_all_submissions(user: str) -> list[Submission]:
+    result: list[Submission] = []
     from_second = 0
     while True:
         new_submissions = get_submissions_from(user, from_second)
