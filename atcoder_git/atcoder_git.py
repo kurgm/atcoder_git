@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
+from collections import defaultdict
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import atcoder_git.atcoder
 import atcoder_git.repository
@@ -11,15 +12,35 @@ from atcoder_git.util import cache_result
 
 
 @cache_result
-def problems_dict() -> Dict[str, atcoder_git.submissions.Problem]:
+def contest_sort_key_dict() -> Dict[str, Tuple[int, int, str]]:
     return {
-        problem.id: problem
-        for problem in atcoder_git.submissions.get_problems()
+        contest.id: (
+            1 if contest.rate_change == "-" else 0,
+            contest.start_epoch_second + contest.duration_second,
+            contest.id
+        )
+        for contest in atcoder_git.submissions.get_contests()
     }
 
 
-def lookup_problem(problem_id: str) -> atcoder_git.submissions.Problem:
-    return problems_dict()[problem_id]
+@cache_result
+def contest_problems_dict() -> \
+        Dict[str, List[atcoder_git.submissions.ContestProblem]]:
+    result: Dict[str, List[atcoder_git.submissions.ContestProblem]] = \
+        defaultdict(lambda: [])
+
+    for contest_problem in atcoder_git.submissions.get_contest_problems():
+        result[contest_problem.problem_id].append(contest_problem)
+    return result
+
+
+def lookup_contest_problem(problem_id: str) -> \
+        atcoder_git.submissions.ContestProblem:
+
+    sort_key_dict = contest_sort_key_dict()
+    return min(
+        contest_problems_dict()[problem_id],
+        key=lambda cprob: sort_key_dict[cprob.contest_id])
 
 
 LANGUAGE_EXTENSION: Dict[str, str] = {
@@ -96,12 +117,12 @@ def get_extension_from_language(language: str) -> str:
 
 
 def get_file_path(submission: atcoder_git.submissions.Submission) -> str:
-    problem = lookup_problem(submission.problem_id)
+    contest_problem = lookup_contest_problem(submission.problem_id)
 
     ext = get_extension_from_language(submission.language)
     return os.path.join(
-        problem.contest_id,
-        problem.problem_index,
+        contest_problem.contest_id,
+        contest_problem.problem_index,
         f"Main{ext}"
     )
 

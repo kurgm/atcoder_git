@@ -40,6 +40,14 @@ class ContestProblem(NamedTuple):
     problem_index: str
 
 
+class Contest(NamedTuple):
+    id: str
+    start_epoch_second: int
+    duration_second: int
+    title: str
+    rate_change: str
+
+
 # https://github.com/kenkoooo/AtCoderProblems/blob/master/doc/api.md
 API_BASE = "https://kenkoooo.com/atcoder"
 
@@ -65,9 +73,16 @@ def get_problems() -> List[Problem]:
 
 @atcoder_problems_api_limit
 def get_contest_problems() -> List[ContestProblem]:
-    resp = requests.get(f"{API_BASE}/resources/contest-problems.json")
+    resp = requests.get(f"{API_BASE}/resources/contest-problem.json")
     cprobs = resp.json()
     return [ContestProblem(**cprob) for cprob in cprobs]
+
+
+@atcoder_problems_api_limit
+def get_contests() -> List[Contest]:
+    resp = requests.get(f"{API_BASE}/resources/contests.json")
+    conts = resp.json()
+    return [Contest(**cont) for cont in conts]
 
 
 def get_all_submissions(user: str) -> List[Submission]:
