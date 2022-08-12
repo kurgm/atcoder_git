@@ -4,23 +4,10 @@ import argparse
 import os
 from typing import Dict, List, Optional, Tuple
 
-import onlinejudge.service.atcoder as atcoder
-
+import atcoder_git.atcoder
 import atcoder_git.repository
 import atcoder_git.submissions
-from atcoder_git.util import cache_result, limit_interval
-
-
-@limit_interval(3.0)
-def get_submission_detail(
-        submission: atcoder_git.submissions.Submission
-) -> atcoder.AtCoderSubmissionDetailedData:
-
-    sub = atcoder.AtCoderSubmission(
-        contest_id=submission.contest_id,
-        submission_id=submission.id)
-
-    return sub.download_data()
+from atcoder_git.util import cache_result
 
 
 @cache_result
@@ -139,10 +126,10 @@ def add_to_repository(
 
     filepath = get_file_path(submission)
     datetime = submission.epoch_second
-    detail = get_submission_detail(submission)
+    detail = atcoder_git.atcoder.get_submission_detail(submission)
     content = detail.source_code
 
-    message = f"Update {filepath}" + "\n\n" + detail.submission.get_url()
+    message = f"Update {filepath}" + "\n\n" + detail.url
 
     repository.update_file(filepath, datetime, content, message)
 
